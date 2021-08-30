@@ -180,15 +180,15 @@ where
 		Ok(())
 	}
 
-	/// Get the `AliveContractInfo` of the `addr` or an error if it is no longer alive.
-	fn address_alive_info(addr: &T::AccountId) -> Result<AliveContractInfo<T>, &'static str> {
+	/// Get the `ContractInfo` of the `addr` or an error if it is no longer alive.
+	fn address_alive_info(addr: &T::AccountId) -> Result<ContractInfo<T>, &'static str> {
 		ContractInfoOf::<T>::get(addr)
 			.and_then(|c| c.get_alive())
 			.ok_or("Expected contract to be alive at this point.")
 	}
 
-	/// Get the `AliveContractInfo` of this contract or an error if it is no longer alive.
-	fn alive_info(&self) -> Result<AliveContractInfo<T>, &'static str> {
+	/// Get the `ContractInfo` of this contract or an error if it is no longer alive.
+	fn alive_info(&self) -> Result<ContractInfo<T>, &'static str> {
 		Self::address_alive_info(&self.account_id)
 	}
 

@@ -141,19 +141,6 @@ pub trait ContractsApi<BlockHash, BlockNumber, AccountId, Balance, Hash> {
 		key: H256,
 		at: Option<BlockHash>,
 	) -> Result<Option<Bytes>>;
-
-	/// Returns the projected time a given contract will be able to sustain paying its rent.
-	///
-	/// The returned projection is relevant for the given block, i.e. it is as if the contract was
-	/// accessed at the beginning of that block.
-	///
-	/// Returns `None` if the contract is exempted from rent.
-	#[rpc(name = "contracts_rentProjection")]
-	fn rent_projection(
-		&self,
-		address: AccountId,
-		at: Option<BlockHash>,
-	) -> Result<Option<BlockNumber>>;
 }
 
 /// An implementation of contract specific RPC methods.
@@ -256,27 +243,6 @@ where
 			.map(Bytes);
 
 		Ok(result)
-	}
-
-	fn rent_projection(
-		&self,
-		address: AccountId,
-		at: Option<<Block as BlockT>::Hash>,
-	) -> Result<Option<<<Block as BlockT>::Header as HeaderT>::Number>> {
-		let api = self.client.runtime_api();
-		let at = BlockId::hash(at.unwrap_or_else(||
-			// If the block hash is not supplied assume the best block.
-			self.client.info().best_hash));
-
-		let result = api
-			.rent_projection(&at, address)
-			.map_err(runtime_error_into_rpc_err)?
-			.map_err(ContractAccessError)?;
-
-		Ok(match result {
-			RentProjection::NoEviction => None,
-			RentProjection::EvictionAt(block_num) => Some(block_num),
-		})
 	}
 }
 

@@ -21,7 +21,7 @@ use crate::{
 		ReturnFlags, SysConfig, UncheckedFrom,
 	},
 	exec::{AccountIdOf, Executable, Frame},
-	storage::{RawAliveContractInfo, Storage},
+	storage::{RawContractInfo, Storage},
 	wasm::{PrefabWasmModule, ReturnCode as RuntimeReturnCode},
 	weights::WeightInfo,
 	BalanceOf, Config, ContractInfo, ContractInfoOf, Error, Pallet, Schedule,
@@ -395,7 +395,7 @@ fn account_removal_does_not_remove_storage() {
 
 		// Set up two accounts with free balance above the existential threshold.
 		{
-			let alice_contract_info = ContractInfo::Alive(RawAliveContractInfo {
+			let alice_contract_info = ContractInfo::Alive(RawContractInfo {
 				trie_id: trie_id1.clone(),
 				storage_size: 0,
 				pair_count: 0,
@@ -411,7 +411,7 @@ fn account_removal_does_not_remove_storage() {
 			set_storage(&ALICE, &key1, Some(b"1".to_vec()));
 			set_storage(&ALICE, &key2, Some(b"2".to_vec()));
 
-			let bob_contract_info = ContractInfo::Alive(RawAliveContractInfo {
+			let bob_contract_info = ContractInfo::Alive(RawContractInfo {
 				trie_id: trie_id2.clone(),
 				storage_size: 0,
 				pair_count: 0,
